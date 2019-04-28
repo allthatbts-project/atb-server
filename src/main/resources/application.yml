@@ -1,0 +1,42 @@
+spring:
+  datasource:
+    url: jdbc:h2:~/atb-server
+    platform: h2
+    username: sa
+    password:
+    initialization-mode: always
+    driverClassName: org.h2.Driver
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    hibernate:
+      ddl-auto: create
+    properties:
+      hibernate:
+        show-sql: true
+        use_sql_comments: true
+        format_sql: true
+  h2:
+    console:
+      enabled: true
+      path: /console
+  devtools:
+    livereload:
+      enabled: true
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: 856907655562-ike5b6ec6o0slrmahiuhhtm6as4vunao.apps.googleusercontent.com
+            client-secret: 5SF4n6vSiM4JayzF3RrfKeX7
+          facebook:
+            client-id: 524734651391848
+            client-secret: fd353cfedb52bb27225a89062bf44210
+
+custom:
+  oauth2:
+    kakao:
+      client-id: 2f5f548237c61a89a53f04539f8200cb
+
+server:
+  port: 7777

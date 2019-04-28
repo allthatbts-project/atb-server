@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Board form</title>
+    <link rel="stylesheet" th:href="@{/css/base.css}"/>
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}"/>
+</head>
+<body>
+
+<div class="container">
+    <div class="page-header">
+        <h1>인증 결과</h1>
+    </div>
+    <div class="pull-right" style="width:100px; margin:10px 0;">
+        <h2 th:text="${socialInfo.socialType}"><span class="sr-only"></span></h2>
+        <h2 th:text="${socialInfo.principal}"><span class="sr-only"></span></h2>
+        <h2 th:text="${socialInfo.name}"><span class="sr-only"></span></h2>
+        <h2 th:text="${socialInfo.email}"><span class="sr-only"></span></h2>
+    </div>
+    <br/><br/>
+</div>
+</body>
+</html>
