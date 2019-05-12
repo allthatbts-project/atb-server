@@ -62,6 +62,7 @@ public class UserArgumentResolver implements HandlerMethodArgumentResolver {
                 return user;
             }
         }
+        session.setAttribute("user", user);
         return user;
     }
 

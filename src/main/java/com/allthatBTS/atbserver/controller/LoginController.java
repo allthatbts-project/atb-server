@@ -14,8 +14,8 @@ public class LoginController {
         return "login";
     }
 
-    @GetMapping("/loginSuccess")
-    public String loginComplete(@SocialUser User user, Model model){
+    @GetMapping("/login/oauth2/code/**")
+    public String loginComplete2(@SocialUser User user, Model model){
         model.addAttribute("socialInfo", user);
         return "result";
     }

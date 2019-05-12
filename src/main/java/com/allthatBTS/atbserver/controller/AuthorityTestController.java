@@ -8,6 +8,7 @@ public class AuthorityTestController {
 
     @GetMapping("/facebook")
     public String facebook(){
+
         return "facebook";
     }
 

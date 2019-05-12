@@ -3,8 +3,12 @@ package com.allthatBTS.atbserver.config;
 import com.allthatBTS.atbserver.oauth2.CustomOAuth2Provider;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.security.oauth2.client.OAuth2ClientProperties;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
@@ -13,8 +17,12 @@ import org.springframework.security.oauth2.client.registration.ClientRegistratio
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
 import org.springframework.security.oauth2.client.registration.InMemoryClientRegistrationRepository;
 import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
+import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.security.web.csrf.CsrfFilter;
 import org.springframework.web.filter.CharacterEncodingFilter;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
 import java.util.List;
 import java.util.Objects;
@@ -31,16 +39,18 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         CharacterEncodingFilter filter = new CharacterEncodingFilter();
         http
+//                .cors()
+//                .and()
                 .authorizeRequests()
                     .antMatchers("/", "/oauth2/**", "/login/**", "/css/**", "/images/**", "/js/**", "/console/**", "/**/*.PNG")
                     .permitAll()
-                    .antMatchers("/facebook").hasAuthority(FACEBOOK.getRoleType())
+                    //.antMatchers("/facebook").hasAuthority(FACEBOOK.getRoleType())
                     .antMatchers("/google").hasAuthority(GOOGLE.getRoleType())
                     .antMatchers("/kakao").hasAuthority(KAKAO.getRoleType())
                     .anyRequest().authenticated()
                 .and()
                     .oauth2Login()
-                    .defaultSuccessUrl("/loginSuccess")
+                    .defaultSuccessUrl("/login/oauth2/code/success")
                     .failureUrl("/loginFailure")
                 .and()
                     .headers().frameOptions().disable()
@@ -58,7 +68,26 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                     .invalidateHttpSession(true)
                 .and()
                     .addFilterBefore(filter, CsrfFilter.class).csrf().disable();
+                //.addFilterBefore(simpleCorsFilter(), CsrfFilter.class);
     }
+//    @Bean
+//    public WebMvcConfigurer corsConfigurer() {
+//        return new WebMvcConfigurerAdapter() {
+//            @Override
+//            public void addCorsMappings(CorsRegistry registry) {
+//                registry.addMapping("/oauth2/authorization/google").allowedOrigins("http://localhost:3000", "http://localhost:3000/oauth2/authorization/google");
+//                registry.addMapping("https://accounts.google.com/o/oauth2/v2/auth").allowedOrigins("http://localhost:3000", "http://localhost:3000/oauth2/authorization/google");
+//            }
+//        };
+//    }
+
+//    @Bean
+//    public FilterRegistrationBean corsFilterRegistration(SimpleCorsFilter filter){
+//        FilterRegistrationBean registration = new FilterRegistrationBean();
+//        registration.setFilter(filter);
+//        registration.setOrder(-100);
+//        return registration;
+//    }
 
     @Bean
     public ClientRegistrationRepository clientRegistrationRepository(
