@@ -1,9 +1,8 @@
-package com.allthatBTS.atbserver.resolver;
+package com.allthatBTS.atbserver.user;
 
-import com.allthatBTS.atbserver.annotation.SocialUser;
-import com.allthatBTS.atbserver.domain.User;
-import com.allthatBTS.atbserver.domain.enums.SocialType;
-import com.allthatBTS.atbserver.respository.UserRepository;
+import com.allthatBTS.atbserver.user.domain.annotation.SocialUser;
+import com.allthatBTS.atbserver.user.domain.User;
+import com.allthatBTS.atbserver.user.domain.enums.SocialType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.MethodParameter;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -14,17 +13,14 @@ import org.springframework.security.oauth2.client.authentication.OAuth2Authentic
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.support.WebDataBinderFactory;
 import org.springframework.web.context.request.NativeWebRequest;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.ModelAndViewContainer;
 
-import javax.servlet.http.HttpSession;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.allthatBTS.atbserver.domain.enums.SocialType.*;
+import static com.allthatBTS.atbserver.user.domain.enums.SocialType.*;
 
 @Component
 public class UserArgumentResolver implements HandlerMethodArgumentResolver {
@@ -41,28 +37,30 @@ public class UserArgumentResolver implements HandlerMethodArgumentResolver {
 
     @Override
     public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer, NativeWebRequest webRequest, WebDataBinderFactory binderFactory) throws Exception {
-        HttpSession session = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest().getSession();
-        User user = (User)session.getAttribute("user");
-        return getUser(user, session);
+        //HttpSession session = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest().getSession();
+        //User user = (User)session.getAttribute("user");
+
+//        HttpServletRequest httpRequest = (HttpServletRequest)webRequest.getNativeRequest();
+//        HttpServletResponse httpResponse = (HttpServletResponse)webRequest.getNativeResponse();
+//        Cookie cookie = WebUtils.getCookie(httpRequest, "loginCookie");
+
+        return getUser();
     }
 
-    private User getUser(User user, HttpSession session){
-        if(user == null){
-            try{
-                OAuth2AuthenticationToken authentication = (OAuth2AuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
-                Map<String, Object> map = authentication.getPrincipal().getAttributes();
-                User convertUser = convertUser(authentication.getAuthorizedClientRegistrationId(), map);
+    private User getUser(){
+        User user = null;
+        try{
+            OAuth2AuthenticationToken authentication = (OAuth2AuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
+            Map<String, Object> map = authentication.getPrincipal().getAttributes();
+            User convertUser = convertUser(authentication.getAuthorizedClientRegistrationId(), map);
 
-                user = userRepository.findByEmail(convertUser.getEmail());
-                if(user == null) { user = userRepository.save(convertUser); }
-
-                setRoleIfNotSame(user, authentication, map);
-                session.setAttribute("user", user);
-            } catch (ClassCastException e){
-                return user;
-            }
+            user = userRepository.findByEmail(convertUser.getEmail());
+            if(user == null) { user = userRepository.save(convertUser); }
+            setRoleIfNotSame(user, authentication, map);
+        } catch (ClassCastException e){
+            e.printStackTrace();
         }
-        session.setAttribute("user", user);
+
         return user;
     }
 

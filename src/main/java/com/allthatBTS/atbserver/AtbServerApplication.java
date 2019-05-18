@@ -1,6 +1,6 @@
 package com.allthatBTS.atbserver;
 
-import com.allthatBTS.atbserver.resolver.UserArgumentResolver;
+import com.allthatBTS.atbserver.user.UserArgumentResolver;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

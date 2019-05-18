@@ -1,4 +1,4 @@
-package com.allthatBTS.atbserver.controller;
+package com.allthatBTS.atbserver.main;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/main")
 public class MainController {
     @GetMapping
-    public ResponseEntity<?> getMainInfo(@CookieValue(value = "jwtToken") String loginToken){
+    public ResponseEntity<?> getMainInfo(){
 
         ResponseEntity result = new ResponseEntity(HttpStatus.OK);
         return result;

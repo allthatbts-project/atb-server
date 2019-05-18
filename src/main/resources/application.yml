@@ -38,5 +38,9 @@ custom:
     kakao:
       client-id: 2f5f548237c61a89a53f04539f8200cb
 
+app:
+  jwtSecret: JWTSuperSecretKey
+  jwtExpirationInMs: 600000000 #10000분
+
 server:
   port: 7777

@@ -1,13 +1,21 @@
-package com.allthatBTS.atbserver.controller;
+package com.allthatBTS.atbserver.user;
 
-import com.allthatBTS.atbserver.annotation.SocialUser;
-import com.allthatBTS.atbserver.domain.User;
+import com.allthatBTS.atbserver.user.domain.annotation.SocialUser;
+import com.allthatBTS.atbserver.user.domain.User;
+import com.allthatBTS.atbserver.util.JwtTokenProvider;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+
 @Controller
-public class LoginController {
+public class UserController {
+
+    @Autowired
+    JwtTokenProvider jwtTokenProvider;
 
     @GetMapping("/login")
     public String login(){
@@ -15,9 +23,14 @@ public class LoginController {
     }
 
     @GetMapping("/login/oauth2/code/**")
-    public String loginComplete2(@SocialUser User user, Model model){
-        model.addAttribute("socialInfo", user);
-        return "result";
+    public void loginComplete(@SocialUser User user, HttpServletResponse response) throws IOException {
+        //model.addAttribute("socialInfo", user);
+
+        Cookie cookie = new Cookie("jwtToken", jwtTokenProvider.generateToken(user));
+        cookie.setPath("/");
+        cookie.setMaxAge(60 * 60 * 24);
+        response.addCookie(cookie);
+        response.sendRedirect("localhost:3000");
     }
 
 //    @GetMapping(value = "/{facebook|google|kakao}/complete")

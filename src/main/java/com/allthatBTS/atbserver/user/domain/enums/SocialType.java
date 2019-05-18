@@ -1,4 +1,4 @@
-package com.allthatBTS.atbserver.domain.enums;
+package com.allthatBTS.atbserver.user.domain.enums;
 
 public enum SocialType {
     FACEBOOK("facebook"),

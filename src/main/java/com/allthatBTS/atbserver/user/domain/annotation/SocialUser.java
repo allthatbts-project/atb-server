@@ -1,4 +1,4 @@
-package com.allthatBTS.atbserver.annotation;
+package com.allthatBTS.atbserver.user.domain.annotation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

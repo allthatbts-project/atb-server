@@ -1,24 +1,27 @@
-package com.allthatBTS.atbserver.domain;
+package com.allthatBTS.atbserver.user.domain;
 
-import com.allthatBTS.atbserver.domain.enums.SocialType;
+import com.allthatBTS.atbserver.user.domain.enums.SocialType;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.Collection;
 
 @Getter
 @NoArgsConstructor
 @Entity
 @Table
-public class User implements Serializable {
+public class User implements Serializable, UserDetails {
 
     @Id
     @Column
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long idx;
+    private Long id;
 
     @Column
     private String name;
@@ -51,5 +54,36 @@ public class User implements Serializable {
         this.socialType = socialType;
         this.createdDate = createdDate;
         this.updatedDate = updatedDate;
+    }
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+
+        return null;
+    }
+
+    @Override
+    public String getUsername() {
+        return null;
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return false;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return false;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return false;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return false;
     }
 }

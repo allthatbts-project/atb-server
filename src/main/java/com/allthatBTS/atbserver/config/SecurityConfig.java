@@ -1,13 +1,9 @@
 package com.allthatBTS.atbserver.config;
 
-import com.allthatBTS.atbserver.oauth2.CustomOAuth2Provider;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.security.oauth2.client.OAuth2ClientProperties;
-import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.Ordered;
-import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -17,18 +13,14 @@ import org.springframework.security.oauth2.client.registration.ClientRegistratio
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
 import org.springframework.security.oauth2.client.registration.InMemoryClientRegistrationRepository;
 import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
-import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.security.web.csrf.CsrfFilter;
 import org.springframework.web.filter.CharacterEncodingFilter;
-import org.springframework.web.servlet.config.annotation.CorsRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import static com.allthatBTS.atbserver.domain.enums.SocialType.*;
+import static com.allthatBTS.atbserver.user.domain.enums.SocialType.*;
 
 
 @Configuration
@@ -43,6 +35,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 //                .and()
                 .authorizeRequests()
                     .antMatchers("/", "/oauth2/**", "/login/**", "/css/**", "/images/**", "/js/**", "/console/**", "/**/*.PNG")
+                    .permitAll()
+                    .antMatchers(HttpMethod.GET, "/api/main")
                     .permitAll()
                     //.antMatchers("/facebook").hasAuthority(FACEBOOK.getRoleType())
                     .antMatchers("/google").hasAuthority(GOOGLE.getRoleType())
@@ -79,14 +73,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 //                registry.addMapping("https://accounts.google.com/o/oauth2/v2/auth").allowedOrigins("http://localhost:3000", "http://localhost:3000/oauth2/authorization/google");
 //            }
 //        };
-//    }
-
-//    @Bean
-//    public FilterRegistrationBean corsFilterRegistration(SimpleCorsFilter filter){
-//        FilterRegistrationBean registration = new FilterRegistrationBean();
-//        registration.setFilter(filter);
-//        registration.setOrder(-100);
-//        return registration;
 //    }
 
     @Bean
