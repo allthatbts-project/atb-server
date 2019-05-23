@@ -1,4 +1,4 @@
-package com.allthatBTS.atbserver.config;
+package com.allthatBTS.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

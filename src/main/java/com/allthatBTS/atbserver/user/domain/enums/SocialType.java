@@ -3,7 +3,8 @@ package com.allthatBTS.atbserver.user.domain.enums;
 public enum SocialType {
     FACEBOOK("facebook"),
     GOOGLE("google"),
-    KAKAO("kakao");
+    KAKAO("kakao"),
+    GITHUB("github");
 
     private final String ROLE_PREFIX = "ROLE_";
     private String name;

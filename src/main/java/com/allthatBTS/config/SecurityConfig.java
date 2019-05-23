@@ -1,10 +1,15 @@
-package com.allthatBTS.atbserver.config;
+package com.allthatBTS.config;
 
+import com.allthatBTS.config.security.oauth2.CustomOAuth2Provider;
+import com.allthatBTS.atbserver.user.CustomOAuth2UserService;
+import com.allthatBTS.config.security.oauth2.OAuth2AuthenticationSuccessHandler;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.security.oauth2.client.OAuth2ClientProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
@@ -25,7 +30,17 @@ import static com.allthatBTS.atbserver.user.domain.enums.SocialType.*;
 
 @Configuration
 @EnableWebSecurity
+@EnableGlobalMethodSecurity(
+        securedEnabled = true,
+        jsr250Enabled = true,
+        prePostEnabled = true
+)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
+    @Autowired
+    private OAuth2AuthenticationSuccessHandler oAuth2AuthenticationSuccessHandler;
+
+    @Autowired
+    private CustomOAuth2UserService customOAuth2UserService;
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
@@ -42,10 +57,20 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                     .antMatchers("/google").hasAuthority(GOOGLE.getRoleType())
                     .antMatchers("/kakao").hasAuthority(KAKAO.getRoleType())
                     .anyRequest().authenticated()
-                .and()
-                    .oauth2Login()
-                    .defaultSuccessUrl("/login/oauth2/code/success")
-                    .failureUrl("/loginFailure")
+                    .and()
+                .oauth2Login()
+                    .authorizationEndpoint()
+                        .baseUri("/oauth2/authorization")
+                        .and()
+                    .redirectionEndpoint()
+                        .baseUri("/login/oauth2/code/*")
+                        .and()
+                    .userInfoEndpoint()
+                        .userService(customOAuth2UserService)
+                        .and()
+                    .successHandler(oAuth2AuthenticationSuccessHandler)
+                    //.defaultSuccessUrl("/login/oauth2/code/success")
+                    //.failureUrl("/loginFailure")
                 .and()
                     .headers().frameOptions().disable()
                 .and()
@@ -74,44 +99,47 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 //            }
 //        };
 //    }
-
-    @Bean
-    public ClientRegistrationRepository clientRegistrationRepository(
-            OAuth2ClientProperties oAuth2ClientProperties, @Value("${custom.oauth2.kakao.client-id}") String kakaoClientId)
-    {
-        List<ClientRegistration> registrations = oAuth2ClientProperties.getRegistration().keySet().stream()
-                .map(client -> getRegistration(oAuth2ClientProperties, client))
-                .filter(Objects::nonNull)
-                .collect(Collectors.toList());
-
-        registrations.add(CustomOAuth2Provider.KAKAO.getBuilder("kakao")
-        .clientId(kakaoClientId)
-        .clientSecret("test")
-        .jwkSetUri("test")
-        .build());
-
-        return new InMemoryClientRegistrationRepository(registrations);
-
-    }
-
-    private ClientRegistration getRegistration(OAuth2ClientProperties clientProperties, String client){
-        if("google".equals(client)){
-            OAuth2ClientProperties.Registration registration = clientProperties.getRegistration().get("google");
-            return CommonOAuth2Provider.GOOGLE.getBuilder(client)
-                    .clientId(registration.getClientId())
-                    .clientSecret(registration.getClientSecret())
-                    .scope("email", "profile")
-                    .build();
-        }
-        if ("facebook".equals(client)) {
-            OAuth2ClientProperties.Registration registration = clientProperties.getRegistration().get("facebook");
-            return CommonOAuth2Provider.FACEBOOK.getBuilder(client)
-                    .clientId(registration.getClientId())
-                    .clientSecret(registration.getClientSecret())
-                    .userInfoUri("https://graph.facebook.com/me?fields=id,name,email,link")
-                    .scope("email")
-                    .build();
-        }
-        return null;
-    }
+//
+//    @Bean
+//    public ClientRegistrationRepository clientRegistrationRepository(
+//            OAuth2ClientProperties oAuth2ClientProperties, @Value("${custom.oauth2.kakao.client-id}") String kakaoClientId)
+//    {
+////        List<ClientRegistration> registrations = oAuth2ClientProperties.getRegistration().keySet().stream()
+////                .map(client -> getRegistration(oAuth2ClientProperties, client))
+////                .filter(Objects::nonNull)
+////                .collect(Collectors.toList());
+//        List<ClientRegistration> registrations = oAuth2ClientProperties.getRegistration().keySet().stream()
+//                .map(client -> getRegistration(oAuth2ClientProperties, client))
+//                .filter(Objects::nonNull)
+//                .collect(Collectors.toList());
+//        registrations.add(CustomOAuth2Provider.KAKAO.getBuilder("kakao")
+//        .clientId(kakaoClientId)
+//        .clientSecret("test")
+//        .jwkSetUri("test")
+//        .build());
+//
+//        return new InMemoryClientRegistrationRepository(registrations);
+//
+//    }
+//
+//    private ClientRegistration getRegistration(OAuth2ClientProperties clientProperties, String client){
+//        if("google".equals(client)){
+//            OAuth2ClientProperties.Registration registration = clientProperties.getRegistration().get("google");
+//            return CommonOAuth2Provider.GOOGLE.getBuilder(client)
+//                    .clientId(registration.getClientId())
+//                    .clientSecret(registration.getClientSecret())
+//                    .scope("email", "profile")
+//                    .build();
+//        }
+//        if ("facebook".equals(client)) {
+//            OAuth2ClientProperties.Registration registration = clientProperties.getRegistration().get("facebook");
+//            return CommonOAuth2Provider.FACEBOOK.getBuilder(client)
+//                    .clientId(registration.getClientId())
+//                    .clientSecret(registration.getClientSecret())
+//                    .userInfoUri("https://graph.facebook.com/me?fields=id,name,email,link")
+//                    .scope("email")
+//                    .build();
+//        }
+//        return null;
+//    }
 }

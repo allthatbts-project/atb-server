@@ -1,4 +1,4 @@
-package com.allthatBTS.atbserver;
+package com.allthatBTS;
 
 import com.allthatBTS.atbserver.user.UserArgumentResolver;
 import org.springframework.beans.factory.annotation.Autowired;

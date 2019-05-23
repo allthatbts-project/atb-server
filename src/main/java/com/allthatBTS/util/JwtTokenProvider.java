@@ -1,10 +1,12 @@
-package com.allthatBTS.atbserver.util;
+package com.allthatBTS.util;
 
 import com.allthatBTS.atbserver.user.domain.User;
+import com.allthatBTS.atbserver.user.domain.UserPrincipal;
 import io.jsonwebtoken.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
@@ -14,13 +16,15 @@ public class JwtTokenProvider {
 
     private static final Logger logger = LoggerFactory.getLogger(JwtTokenProvider.class);
 
-    @Value("${app.jwtSecret}")
+    @Value("${app.auth.tokenSecret}")
     private String jwtSecret;
 
-    @Value("${app.jwtExpirationInMs}")
+    @Value("${app.auth.tokenExpirationMsec}")
     private int jwtExpirationInMs;
 
-    public String generateToken(User user) {
+    public String generateToken(Authentication authentication) {
+        User user = (User) authentication.getPrincipal();
+
         Date now = new Date();
         Date expiryDate = new Date(now.getTime() + jwtExpirationInMs);
 

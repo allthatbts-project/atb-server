@@ -75,7 +75,7 @@ public class UserArgumentResolver implements HandlerMethodArgumentResolver {
         return User.builder()
                 .name(String.valueOf(map.get("name")))
                 .email(String.valueOf(map.get("email")))
-                .principal(String.valueOf(map.get("id")))
+                //.principal(String.valueOf(map.get("id")))
                 .socialType(socialType)
                 .createdDate(LocalDateTime.now())
                 .build();
@@ -86,7 +86,7 @@ public class UserArgumentResolver implements HandlerMethodArgumentResolver {
         return User.builder()
                 .name(propertyMap.get("nickname"))
                 .email(String.valueOf(map.get("kaccount_email")))
-                .principal(String.valueOf(map.get("id")))
+                //.principal(String.valueOf(map.get("id")))
                 .socialType(KAKAO)
                 .createdDate(LocalDateTime.now())
                 .build();

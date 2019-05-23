@@ -29,18 +29,35 @@ spring:
           google:
             client-id: 856907655562-ike5b6ec6o0slrmahiuhhtm6as4vunao.apps.googleusercontent.com
             client-secret: 5SF4n6vSiM4JayzF3RrfKeX7
+            scope:
+              - profile
+              - email
           facebook:
             client-id: 524734651391848
             client-secret: fd353cfedb52bb27225a89062bf44210
+            scope:
+              - email
+              - public_profile
+              - picture
 
 custom:
   oauth2:
     kakao:
       client-id: 2f5f548237c61a89a53f04539f8200cb
+      scope:
+        - profile
 
 app:
-  jwtSecret: JWTSuperSecretKey
-  jwtExpirationInMs: 600000000 #10000분
+  auth:
+    tokenSecret: 926D96C90030DD58429D2751AC1BDBBC
+    tokenExpirationMsec: 864000000
+  oauth2:
+    # After successfully authenticating with the OAuth2 Provider,
+    # we'll be generating an auth token for the user and sending the token to the
+    # redirectUri mentioned by the client in the /oauth2/authorize request.
+    # We're not using cookies because they won't work well in mobile clients.
+    authorizedRedirectUris:
+      - http://localhost:3000/oauth2/redirect
 
 server:
   port: 7777
