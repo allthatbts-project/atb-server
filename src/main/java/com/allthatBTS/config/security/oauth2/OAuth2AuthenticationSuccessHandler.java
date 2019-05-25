@@ -34,6 +34,7 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
             logger.debug("Response has already been committed. Unable to redirect to " + targetUrl);
             return;
         }
+        //response.add
 
         clearAuthenticationAttributes(request, response);
         getRedirectStrategy().sendRedirect(request, response, targetUrl);
@@ -44,10 +45,11 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
                 .map(Cookie::getValue);
 
         String targetUrl = redirectUri.orElse(getDefaultTargetUrl());
-        String token = tokenProvider.generateToken(authentication);
-
+        String jwtToken = tokenProvider.generateToken(authentication);
+        CookieUtils.addCookie(response, "jwtToken", jwtToken, 60 * 60 * 24);
+        //response.addHeader("Authorization", jwtToken);
         return UriComponentsBuilder.fromUriString(targetUrl)
-                .queryParam("token", token)
+                //.queryParam("token", token)
                 .build().toUriString();
     }
 
