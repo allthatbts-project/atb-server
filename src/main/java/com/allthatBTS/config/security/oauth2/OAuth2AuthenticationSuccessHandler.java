@@ -5,6 +5,7 @@ import com.allthatBTS.util.CookieUtils;
 import com.allthatBTS.util.JwtTokenProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.web.RedirectStrategy;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -14,12 +15,15 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 @Component
 public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
     private JwtTokenProvider tokenProvider;
+
 
     @Autowired
     OAuth2AuthenticationSuccessHandler(JwtTokenProvider tokenProvider) {
@@ -34,8 +38,6 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
             logger.debug("Response has already been committed. Unable to redirect to " + targetUrl);
             return;
         }
-        //response.add
-
         clearAuthenticationAttributes(request, response);
         getRedirectStrategy().sendRedirect(request, response, targetUrl);
     }
@@ -45,9 +47,17 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
                 .map(Cookie::getValue);
 
         String targetUrl = redirectUri.orElse(getDefaultTargetUrl());
-        String jwtToken = tokenProvider.generateToken(authentication);
-        CookieUtils.addCookie(response, "jwtToken", jwtToken, 60 * 60 * 24);
+        String token = tokenProvider.generateToken(authentication);
+        CookieUtils.addCookie(response, "token", token, 60 * 60 * 24);
         //response.addHeader("Authorization", jwtToken);
+//        Map<String, String> jsonResponse = new HashMap<String, String>();
+//        jsonResponse.put("Login", "true");
+//        String json = new Gson().toJson(jsonResponse);
+//        response.setContentType("application/json");
+//        response.setCharacterEncoding("UTF-8");
+//        response.getWriter().write(json);
+
+
         return UriComponentsBuilder.fromUriString(targetUrl)
                 //.queryParam("token", token)
                 .build().toUriString();

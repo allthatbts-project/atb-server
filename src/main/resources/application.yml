@@ -3,12 +3,12 @@ spring:
     url: jdbc:mysql://localhost:3306/atb_database?serverTimezone=Asia/Seoul
     username: holeman79
     password: 1234
-    driverClassName: com.mysql.jdbc.Driver
+    driverClassName: com.mysql.cj.jdbc.Driver
     platform: mysql
   jpa:
     show-sql: true
     hibernate:
-      ddl-auto: none
+      ddl-auto: update
       naming-strategy: org.hibernate.cfg.ImprovedNamingStrategy
     properties:
       hibernate:
@@ -23,6 +23,7 @@ spring:
           google:
             client-id: 856907655562-ike5b6ec6o0slrmahiuhhtm6as4vunao.apps.googleusercontent.com
             client-secret: 5SF4n6vSiM4JayzF3RrfKeX7
+            #redirectUriTemplate: "{baseUrl}/login/oauth2/code/{registrationId}"
             scope:
               - profile
               - email

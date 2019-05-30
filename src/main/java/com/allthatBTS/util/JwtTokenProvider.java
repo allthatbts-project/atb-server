@@ -1,7 +1,6 @@
 package com.allthatBTS.util;
 
 import com.allthatBTS.atbserver.user.domain.User;
-import com.allthatBTS.atbserver.user.domain.UserPrincipal;
 import io.jsonwebtoken.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -1,33 +1,33 @@
 package com.allthatBTS.atbserver.user;
 
-import com.allthatBTS.atbserver.user.OAuth2UserInfoFactory;
-import com.allthatBTS.atbserver.user.UserRepository;
+import com.allthatBTS.atbserver.user.domain.Role;
 import com.allthatBTS.atbserver.user.domain.User;
-import com.allthatBTS.atbserver.user.domain.UserPrincipal;
+import com.allthatBTS.atbserver.user.domain.enums.RoleType;
 import com.allthatBTS.atbserver.user.domain.enums.SocialType;
 import com.allthatBTS.atbserver.user.domain.oauth2.OAuth2UserInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.InternalAuthenticationServiceException;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
-import java.security.AuthProvider;
 import java.time.LocalDateTime;
-import java.util.Collections;
-import java.util.List;
 import java.util.Optional;
 
 @Service
 public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
+
+    private final RoleRepository roleRepository;
+
+    public CustomOAuth2UserService(UserRepository userRepository, RoleRepository roleRepository){
+        this.userRepository = userRepository;
+        this.roleRepository = roleRepository;
+    }
 
     @Override
     public OAuth2User loadUser(OAuth2UserRequest oAuth2UserRequest) throws OAuth2AuthenticationException {
@@ -47,25 +47,24 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         Optional<User> userOptional = userRepository.findBySocialId(oAuth2UserInfo.getId());
         User user;
         if(userOptional.isPresent()) {
-            user = userOptional.get();
-
-            user = updateExistingUser(user, oAuth2UserInfo);
+            user = updateExistingUser(userOptional.get(), oAuth2UserInfo);
         } else {
             user = registerNewUser(oAuth2UserRequest, oAuth2UserInfo);
         }
-//        user.setAttributes(oAuth2User.getAttributes());
+        user.setAttributes(oAuth2User.getAttributes());
 //        List<GrantedAuthority> authorities = Collections.
 //                singletonList(new SimpleGrantedAuthority("ROLE_USER"));
 //        user.setAuthorities(authorities);
 
         return user;
-        //return UserPrincipal.create(user, oAuth2User.getAttributes());
     }
 
     private User registerNewUser(OAuth2UserRequest oAuth2UserRequest, OAuth2UserInfo oAuth2UserInfo) {
+        Optional<Role> role = roleRepository.findByName(RoleType.USER);
         User user = User.builder()
                 .socialType(SocialType.valueOf(oAuth2UserRequest.getClientRegistration().getRegistrationId().toUpperCase()))
                 .socialId(oAuth2UserInfo.getId())
+                .role(role.get())
                 .name(oAuth2UserInfo.getName())
                 .email(oAuth2UserInfo.getEmail())
                 .imageUrl(oAuth2UserInfo.getImageUrl())

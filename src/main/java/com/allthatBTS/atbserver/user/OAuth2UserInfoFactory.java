@@ -1,10 +1,7 @@
 package com.allthatBTS.atbserver.user;
 
-import com.allthatBTS.atbserver.user.domain.oauth2.FacebookOAuth2UserInfo;
-import com.allthatBTS.atbserver.user.domain.oauth2.GithubOAuth2UserInfo;
-import com.allthatBTS.atbserver.user.domain.oauth2.GoogleOAuth2UserInfo;
-import com.allthatBTS.atbserver.user.domain.oauth2.OAuth2UserInfo;
-import com.allthatBTS.exception.SocialTypeNotExistException;
+import com.allthatBTS.atbserver.user.domain.oauth2.*;
+import com.allthatBTS.exception.OAuth2AuthenticationProcessingException;
 
 import java.util.Map;
 
@@ -19,8 +16,10 @@ public class OAuth2UserInfoFactory {
             return new FacebookOAuth2UserInfo(attributes);
         } else if (registrationId.equalsIgnoreCase(GITHUB.getValue())) {
             return new GithubOAuth2UserInfo(attributes);
-        } else {
-            throw new SocialTypeNotExistException("Sorry! Login with " + registrationId + " is not supported yet.");
+        }else if (registrationId.equalsIgnoreCase(KAKAO.getValue())) {
+            return new KakaoOAuth2UserInfo(attributes);
+        }else {
+            throw new OAuth2AuthenticationProcessingException("Sorry! Login with " + registrationId + " is not supported yet.");
         }
     }
 }

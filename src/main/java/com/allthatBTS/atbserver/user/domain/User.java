@@ -1,5 +1,6 @@
 package com.allthatBTS.atbserver.user.domain;
 
+import com.allthatBTS.atbserver.user.domain.enums.RoleType;
 import com.allthatBTS.atbserver.user.domain.enums.SocialType;
 import lombok.Builder;
 import lombok.Getter;
@@ -22,7 +23,7 @@ import java.util.Map;
 @Setter
 @NoArgsConstructor
 @Entity
-@Table
+@Table(name = "tb_user")
 public class User implements UserDetails, OAuth2User {
 
     @Id
@@ -49,6 +50,10 @@ public class User implements UserDetails, OAuth2User {
     @Column
     private String socialId;
 
+    @ManyToOne
+    @JoinColumn(name="role_id")
+    private Role role;
+
     @Transient
     private Map<String, Object> attributes;
 
@@ -62,40 +67,35 @@ public class User implements UserDetails, OAuth2User {
     private LocalDateTime updatedDate;
 
     @Builder
-    public User(String name, String password, String email, String imageUrl, SocialType socialType, String socialId, Map<String, Object> attributes, LocalDateTime createdDate, LocalDateTime updatedDate){
+    public User(String name, String password, String email, String imageUrl, SocialType socialType, String socialId, Role role, Map<String, Object> attributes, LocalDateTime createdDate, LocalDateTime updatedDate){
         this.name = name;
         this.password = password;
         this.email = email;
         this.imageUrl = imageUrl;
         this.socialType = socialType;
         this.socialId = socialId;
+        this.role = role;
         this.attributes = attributes;
         this.createdDate = createdDate;
         this.updatedDate = updatedDate;
     }
 
-//    public static User create(User user) {
-//        List<GrantedAuthority> authorities = Collections.
-//                singletonList(new SimpleGrantedAuthority("ROLE_USER"));
-//
-//        return new User(
-//                user.getId(),
-//                user.getEmail(),
-//                user.getPassword(),
-//                authorities
-//        );
-//    }
-//
-//    public static User create(User user, Map<String, Object> attributes) {
-//        User resultUser = User.create(user);
-//        resultUser.setAttributes(attributes);
-//        return resultUser;
-//    }
+    public User(User user){
+        this.id = user.getId();
+        this.name = user.getName();
+        this.password = user.getPassword();
+        this.email = user.getEmail();
+        this.imageUrl = user.getImageUrl();
+        this.socialType = user.getSocialType();
+        this.socialId = user.getSocialId();
+        this.role = user.getRole();
+        this.createdDate = user.getCreatedDate();
+        this.updatedDate = user.getUpdatedDate();
+    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-
-        return null;
+        return authorities;
     }
 
     @Override
