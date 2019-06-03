@@ -1,5 +1,7 @@
 package com.allthatBTS.atbserver.user.domain.oauth2;
 
+import com.allthatBTS.config.constant.Constant;
+
 import java.util.Map;
 
 public class FacebookOAuth2UserInfo extends OAuth2UserInfo {
@@ -24,6 +26,6 @@ public class FacebookOAuth2UserInfo extends OAuth2UserInfo {
 
     @Override
     public String getImageUrl() {
-        return (String) attributes.get("picture");
+        return Constant.FACEBOOK_GRAPH_URL + "/" + (String) attributes.get("id") + "/picture?type=large";
     }
 }
