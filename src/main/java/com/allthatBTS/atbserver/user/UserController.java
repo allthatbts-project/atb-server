@@ -49,6 +49,11 @@ public class UserController {
         Optional<User> user = userRepository.findById(userId);
         CookieUtils.deleteCookie(request, response, Constant.TOKEN);
 
-        return new ResponseEntity(new UserResponse(token, user.get()), HttpStatus.OK);
+        return new ResponseEntity(UserResponse.builder()
+                .id(user.get().getId())
+                .name(user.get().getName())
+                .imageUrl(user.get().getImageUrl())
+                .token(token)
+                .build(), HttpStatus.OK);
     }
 }
