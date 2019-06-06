@@ -2,6 +2,7 @@ package com.allthatBTS.atbserver.crawling.domain;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -9,55 +10,55 @@ import java.time.LocalDateTime;
 
 
 @Getter
+@Setter
 @NoArgsConstructor
 @Entity
-@Table
+@Table(name = "tb_youtube_data")
 public class YoutubeData implements Serializable
 {
     @Id
-    @Column(name = "ID")
-    private String Id;
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private String id;
 
-    @Column(name = "YOUTUBE_ID")
-    private String YoutubeId;
+    @Column
+    private String youtubeId;
 
-    @Column(name = "CHANNEL_NAME")
-    private String ChannelName;
+    @Column
+    private String channelName;
 
-    @Column(name = "TITLE")
-    private String Title;
+    @Column
+    private String title;
 
-    @Column(name = "THUMBNAIL_IMG_URL")
-    private String ThumbnailImageUrl;
+    @Column
+    private String thumbnailImgUrl;
 
-    @Column(name = "VIEW_CNT")
-    private Long ViewCount;
+    @Column
+    private int viewCnt;
 
-    @Column(name = "LIKE_CNT")
-    private Long LikeCount;
+    @Column
+    private int likeCnt;
 
-    @Column(name = "DISLIKE_CNT")
-    private Long DislikeCount;
+    @Column
+    private int dislikeCnt;
 
-    @Column(name = "COMMENT_CNT")
-    private Long CommentCount;
+    @Column
+    private int commentCnt;
 
-    @Column(name = "PUBLISH_DT")
-    private LocalDateTime PublishDatetime;
+    @Column
+    private LocalDateTime publishDt;
 
-    @Column(name = "URL")
-    private String Url;
+    @Column
+    private String url;
 
-    @Column(name = "DELETED_YN")
-    private String DeleteYN;
+    @Column
+    private char deletedYn;
 
-    @Column(name = "DELETED_DT")
-    private LocalDateTime DeletedDateTime;
+    @Column
+    private LocalDateTime deletedDt;
 
-    @Column(name = "CREATE_DT")
-    private LocalDateTime CreateDateTime;
+    @Column
+    private LocalDateTime createDt;
 
-    @Column(name = "UPDATE_DT")
-    private LocalDateTime UpdateDateTime;
-
+    @Column
+    private LocalDateTime updateDt;
 }

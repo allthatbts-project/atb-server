@@ -1,5 +1,7 @@
 package com.allthatBTS.atbserver.crawling;
 
+import com.allthatBTS.atbserver.crawling.domain.InstagramData;
+import com.allthatBTS.atbserver.crawling.domain.TwitterData;
 import com.allthatBTS.atbserver.crawling.domain.YoutubeData;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -26,21 +28,45 @@ public class CrawlingController {
     @Autowired
     YoutubeDataRepository youtubeDataRepository;
 
-    /**
-     * Get a student by ID.
-     *
-     * @param
-     * @return
-     */
+    @Autowired
+    TwitterDataRepository twitterDataRepository;
+
+    @Autowired
+    InstagramDataRepository instagramDataRepository;
+
     @ApiOperation("Retrieves a Youtube DataList.")
     @ApiResponses(value = {
             @ApiResponse(code = 404, message = "YoutubeData not found."),
             @ApiResponse(code = 200, message = "OK") })
-    @RequestMapping(method = RequestMethod.GET, value = "/api/crawler/YoutubeDataList", produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(method = RequestMethod.POST, value = "/api/crawler/YoutubeDataList", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getYoutubeDataList(){
         Map result = new HashMap();
         List<YoutubeData> youtubeDataList = youtubeDataRepository.findAll();
         result.put("youtubeData", youtubeDataList);
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+
+    @ApiOperation("Retrieves a Twitter DataList.")
+    @ApiResponses(value = {
+            @ApiResponse(code = 404, message = "TwitterData not found."),
+            @ApiResponse(code = 200, message = "OK") })
+    @RequestMapping(method = RequestMethod.POST, value = "/api/crawler/TwitterDataList", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> getTwitterDataList(){
+        Map result = new HashMap();
+        List<TwitterData> twitterDataList = twitterDataRepository.findAll();
+        result.put("twitterData", twitterDataList);
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+
+    @ApiOperation("Retrieves a Youtube DataList.")
+    @ApiResponses(value = {
+            @ApiResponse(code = 404, message = "YoutubeData not found."),
+            @ApiResponse(code = 200, message = "OK") })
+    @RequestMapping(method = RequestMethod.POST, value = "/api/crawler/InstagramDataList", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> getInstagramDataList(){
+        Map result = new HashMap();
+        List<InstagramData> instagramDataList = instagramDataRepository.findAll();
+        result.put("instagramData", instagramDataList);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 }

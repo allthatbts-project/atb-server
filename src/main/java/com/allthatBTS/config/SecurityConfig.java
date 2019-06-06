@@ -67,6 +67,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                     .permitAll()
                     .antMatchers(HttpMethod.GET, "/api/user/**")
                     .permitAll()
+                    .antMatchers(HttpMethod.POST, "/api/crawler/**")
+                    .permitAll()
                     //.antMatchers("/facebook").hasAuthority(FACEBOOK.getRoleType())
                     .anyRequest().authenticated()
                     .and()
