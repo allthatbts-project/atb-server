@@ -80,19 +80,6 @@ public class User implements UserDetails, OAuth2User {
         this.updatedDate = updatedDate;
     }
 
-    public User(User user){
-        this.id = user.getId();
-        this.name = user.getName();
-        this.password = user.getPassword();
-        this.email = user.getEmail();
-        this.imageUrl = user.getImageUrl();
-        this.socialType = user.getSocialType();
-        this.socialId = user.getSocialId();
-        this.role = user.getRole();
-        this.createdDate = user.getCreatedDate();
-        this.updatedDate = user.getUpdatedDate();
-    }
-
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return authorities;

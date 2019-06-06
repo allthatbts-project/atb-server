@@ -5,6 +5,7 @@ import com.allthatBTS.util.CookieUtils;
 import com.allthatBTS.util.JwtTokenProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.RedirectStrategy;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
@@ -23,7 +24,6 @@ import java.util.Optional;
 public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
     private JwtTokenProvider tokenProvider;
-
 
     @Autowired
     OAuth2AuthenticationSuccessHandler(JwtTokenProvider tokenProvider) {
@@ -48,7 +48,8 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
 
         String targetUrl = redirectUri.orElse(getDefaultTargetUrl());
         String token = tokenProvider.generateToken(authentication);
-        CookieUtils.addCookie(response, "token", token, 60 * 60 * 24);
+        CookieUtils.addCookie(response, Constant.TOKEN, token, 60 * 60 * 24);
+        SecurityContextHolder.getContext().setAuthentication(authentication);
         //response.addHeader("Authorization", jwtToken);
 //        Map<String, String> jsonResponse = new HashMap<String, String>();
 //        jsonResponse.put("Login", "true");
