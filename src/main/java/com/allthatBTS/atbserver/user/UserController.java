@@ -56,4 +56,9 @@ public class UserController {
                 .token(token)
                 .build(), HttpStatus.OK);
     }
+
+    @GetMapping("/test")
+    public void testMethod(){
+        throw new OAuth2AuthenticationProcessingException("test Exception");
+    }
 }

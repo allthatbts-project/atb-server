@@ -1,7 +1,7 @@
 package com.allthatBTS.config;
 
 import com.allthatBTS.config.security.oauth2.CustomOAuth2Provider;
-import com.allthatBTS.atbserver.user.CustomOAuth2UserService;
+import com.allthatBTS.config.security.oauth2.CustomOAuth2UserService;
 import com.allthatBTS.config.security.oauth2.HttpCookieOAuth2AuthorizationRequestRepository;
 import com.allthatBTS.config.security.oauth2.OAuth2AuthenticationSuccessHandler;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,8 +26,6 @@ import org.springframework.web.filter.CharacterEncodingFilter;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
-
-import static com.allthatBTS.atbserver.user.domain.enums.SocialType.*;
 
 
 @Configuration
@@ -61,7 +59,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 //                .cors()
 //                .and()
                 .authorizeRequests()
-                    .antMatchers("/", "/oauth2/**", "/login/**", "/css/**", "/images/**", "/js/**", "/console/**", "/**/*.PNG","/v2/api-docs","/swagger*/**")
+                    .antMatchers("/", "/oauth2/**", "/login/**", "/css/**", "/images/**", "/js/**", "/console/**", "/**/*.png","/v2/api-docs","/swagger*/**")
                     .permitAll()
                     .antMatchers(HttpMethod.GET, "/api/main/**")
                     .permitAll()
@@ -69,7 +67,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                     .permitAll()
                     .antMatchers(HttpMethod.POST, "/api/crawler/**")
                     .permitAll()
-                    //.antMatchers("/facebook").hasAuthority(FACEBOOK.getRoleType())
                     .anyRequest().authenticated()
                     .and()
                 .oauth2Login()
@@ -120,10 +117,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     public ClientRegistrationRepository clientRegistrationRepository(
             OAuth2ClientProperties oAuth2ClientProperties, @Value("${custom.oauth2.kakao.client-id}") String kakaoClientId)
     {
-//        List<ClientRegistration> registrations = oAuth2ClientProperties.getRegistration().keySet().stream()
-//                .map(client -> getRegistration(oAuth2ClientProperties, client))
-//                .filter(Objects::nonNull)
-//                .collect(Collectors.toList());
         List<ClientRegistration> registrations = oAuth2ClientProperties.getRegistration().keySet().stream()
                 .map(client -> getRegistration(oAuth2ClientProperties, client))
                 .filter(Objects::nonNull)
