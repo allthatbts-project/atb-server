@@ -1,6 +1,7 @@
 package com.allthatBTS.atbserver.user;
 
 import com.allthatBTS.atbserver.user.domain.oauth2.*;
+import com.allthatBTS.exception.ExceptionMessageType;
 import com.allthatBTS.exception.OAuth2AuthenticationProcessingException;
 
 import java.util.Map;
@@ -19,7 +20,7 @@ public class OAuth2UserInfoFactory {
         }else if (registrationId.equalsIgnoreCase(KAKAO.getValue())) {
             return new KakaoOAuth2UserInfo(attributes);
         }else {
-            throw new OAuth2AuthenticationProcessingException("Sorry! Login with " + registrationId + " is not supported yet.");
+            throw new OAuth2AuthenticationProcessingException(registrationId + " " + ExceptionMessageType.NOT_SUPPORTED.getValue());
         }
     }
 }

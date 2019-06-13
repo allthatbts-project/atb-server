@@ -3,6 +3,7 @@ package com.allthatBTS.atbserver.user;
 import com.allthatBTS.atbserver.user.domain.annotation.SocialUser;
 import com.allthatBTS.atbserver.user.domain.User;
 import com.allthatBTS.config.constant.Constant;
+import com.allthatBTS.exception.ExceptionMessageType;
 import com.allthatBTS.exception.OAuth2AuthenticationProcessingException;
 import com.allthatBTS.payload.UserResponse;
 import com.allthatBTS.util.CookieUtils;
@@ -39,12 +40,8 @@ public class UserController {
     @GetMapping
     public ResponseEntity<UserResponse> getUser(HttpServletRequest request, HttpServletResponse response){
         String token = CookieUtils.getCookie(request, Constant.TOKEN)
-                .map(Cookie::getValue).orElse(null);
+                .map(Cookie::getValue).orElseThrow(() -> new OAuth2AuthenticationProcessingException(ExceptionMessageType.TOKEN_IS_NOT_EXIST.getValue()));
 
-        if(token == null){
-            // error handling
-            throw new OAuth2AuthenticationProcessingException("token is not exist");
-        }
         Long userId = tokenProvider.getUserIdFromJWT(token);
         Optional<User> user = userRepository.findById(userId);
         CookieUtils.deleteCookie(request, response, Constant.TOKEN);
@@ -57,8 +54,4 @@ public class UserController {
                 .build(), HttpStatus.OK);
     }
 
-    @GetMapping("/test")
-    public void testMethod(){
-        throw new OAuth2AuthenticationProcessingException("test Exception");
-    }
 }

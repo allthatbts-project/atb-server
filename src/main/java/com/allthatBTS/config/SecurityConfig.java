@@ -4,6 +4,8 @@ import com.allthatBTS.config.security.oauth2.CustomOAuth2Provider;
 import com.allthatBTS.config.security.oauth2.CustomOAuth2UserService;
 import com.allthatBTS.config.security.oauth2.HttpCookieOAuth2AuthorizationRequestRepository;
 import com.allthatBTS.config.security.oauth2.OAuth2AuthenticationSuccessHandler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.security.oauth2.client.OAuth2ClientProperties;
@@ -19,10 +21,13 @@ import org.springframework.security.config.oauth2.client.CommonOAuth2Provider;
 import org.springframework.security.oauth2.client.registration.ClientRegistration;
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
 import org.springframework.security.oauth2.client.registration.InMemoryClientRegistrationRepository;
+import org.springframework.security.web.AuthenticationEntryPoint;
+import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
 import org.springframework.security.web.csrf.CsrfFilter;
 import org.springframework.web.filter.CharacterEncodingFilter;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -36,6 +41,8 @@ import java.util.stream.Collectors;
         prePostEnabled = true
 )
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
+    private static final Logger logger = LoggerFactory.getLogger(SecurityConfig.class);
+
     @Autowired
     private OAuth2AuthenticationSuccessHandler oAuth2AuthenticationSuccessHandler;
 
@@ -44,6 +51,22 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
     private HttpCookieOAuth2AuthorizationRequestRepository httpCookieOAuth2AuthorizationRequestRepository;
+
+    @Bean
+    public AuthenticationEntryPoint authenticationEntryPoint() {
+        return (request, response, authException) -> {
+            logger.error("Responding with unauthorized error. Message - {}", authException.getMessage());
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, authException.getMessage());
+        };
+    }
+
+    @Bean
+    public AccessDeniedHandler accessDeniedHandler() {
+        return (request, response, accessDeniedException) -> {
+            logger.error("Responding with fobidden error. Message - {}", accessDeniedException.getMessage());
+            response.sendError(HttpServletResponse.SC_FORBIDDEN, accessDeniedException.getMessage());
+        };
+    }
 
     @Override
     public void configure(WebSecurity web) throws Exception {
@@ -56,8 +79,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         CharacterEncodingFilter filter = new CharacterEncodingFilter();
         http
-//                .cors()
-//                .and()
+                .cors()
+                .and()
                 .authorizeRequests()
                     .antMatchers("/", "/oauth2/**", "/login/**", "/css/**", "/images/**", "/js/**", "/console/**", "/**/*.png","/v2/api-docs","/swagger*/**")
                     .permitAll()
@@ -88,7 +111,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                     .headers().frameOptions().disable()
                 .and()
                     .exceptionHandling()
-                    .authenticationEntryPoint(new LoginUrlAuthenticationEntryPoint("/login"))
+                        .authenticationEntryPoint(authenticationEntryPoint())
+                        .accessDeniedHandler(accessDeniedHandler())
                 .and()
                     .formLogin()
                     .successForwardUrl("/board/list")
@@ -102,17 +126,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                     .addFilterBefore(filter, CsrfFilter.class).csrf().disable();
                 //.addFilterBefore(simpleCorsFilter(), CsrfFilter.class);
     }
-//    @Bean
-//    public WebMvcConfigurer corsConfigurer() {
-//        return new WebMvcConfigurerAdapter() {
-//            @Override
-//            public void addCorsMappings(CorsRegistry registry) {
-//                registry.addMapping("/oauth2/authorization/google").allowedOrigins("http://localhost:3000", "http://localhost:3000/oauth2/authorization/google");
-//                registry.addMapping("https://accounts.google.com/o/oauth2/v2/auth").allowedOrigins("http://localhost:3000", "http://localhost:3000/oauth2/authorization/google");
-//            }
-//        };
-//    }
-//
+
     @Bean
     public ClientRegistrationRepository clientRegistrationRepository(
             OAuth2ClientProperties oAuth2ClientProperties, @Value("${custom.oauth2.kakao.client-id}") String kakaoClientId)
