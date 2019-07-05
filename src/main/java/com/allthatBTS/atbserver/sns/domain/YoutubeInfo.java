@@ -1,4 +1,4 @@
-package com.allthatBTS.atbserver.main.domain;
+package com.allthatBTS.atbserver.sns.domain;
 
 import lombok.Getter;
 
@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 @Getter
 @Table(name = "tb_youtube_data")
 @Entity
-public class UtubeInfo {
+public class YoutubeInfo {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private String id;

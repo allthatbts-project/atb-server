@@ -21,7 +21,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@Controller
 @RestController
 @Api(tags = "crawler")
 public class CrawlingController {
